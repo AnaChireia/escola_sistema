@@ -1,2 +1,3 @@
 # escola_sistema
 
+legal
