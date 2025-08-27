@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-megaphone-fill me-2"></i>Gerenciar Avisos</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Publicar Novo Aviso</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" class="mb-5">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" name="titulo" id="titulo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="conteudo" class="form-label">Conteúdo</label>
+                <textarea name="conteudo" id="conteudo" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send-fill me-1"></i> Publicar Aviso
+                </button>
+            </div>
+        </form>
+
+        <hr>
+
+        <h5 class="mb-3 mt-4">Avisos Publicados</h5>
+        <div class="list-group">
+            {% if avisos %}
+                {% for aviso in avisos %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ aviso.titulo }}</h6>
+                            <small class="text-muted">{{ aviso.data_publicacao.strftime('%d/%m/%Y às %H:%M') }}</small>
+                        </div>
+                        <p class="mb-1">{{ aviso.conteudo }}</p>
+                        <div class="text-end">
+                            <a href="{{ url_for('remover_aviso', aviso_id=aviso.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja remover este aviso?');">
+                                <i class="bi bi-trash-fill"></i> Remover
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-muted">Nenhum aviso publicado.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

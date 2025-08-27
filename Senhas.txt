@@ -1,0 +1,6 @@
+Para login no painel do gestor usar o email: admin@escola.com e senha:admin123
+
+E para login no painel do professor só usar o email: pati@email.com e senha: 12345
+
+Login painel do aluno email: edu@email.com 
+senha:12345

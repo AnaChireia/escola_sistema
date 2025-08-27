@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4">Planos de Aula - {{ disciplina['nome'] }}</h2>
+
+        <a href="{{ url_for('professor_dashboard', professor_id=session['user_id']) }}" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+        </a>
+
+        <!-- Formulário para Criar Novo Plano de Aula -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Criar Novo Plano de Aula</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título do Plano</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição/Conteúdo</label>
+                        <textarea class="form-control" id="descricao" name="descricao" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="data_prevista" class="form-label">Data Prevista</label>
+                        <input type="date" class="form-control" id="data_prevista" name="data_prevista">
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Criar Plano de Aula
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de Planos de Aula -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Planos de Aula Criados</h4>
+            </div>
+            <div class="card-body">
+                {% if planos %}
+                    <div class="row">
+                        {% for plano in planos %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ plano['titulo'] }}</h5>
+                                        <p class="card-text">{{ plano['descricao'][:100] }}{% if plano['descricao']|length > 100 %}...{% endif %}</p>
+                                        {% if plano['data_prevista'] %}
+                                            <p class="card-text"><small class="text-muted">Data: {{ plano['data_prevista'] }}</small></p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="{{ url_for('editar_plano_aula', plano_id=plano['id']) }}" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <form action="{{ url_for('remover_plano_aula', plano_id=plano['id']) }}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja remover este plano de aula?');">
+                                                <i class="bi bi-trash"></i> Remover
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Nenhum plano de aula criado ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

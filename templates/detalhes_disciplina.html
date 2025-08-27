@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-gear-fill me-2"></i>Detalhes da Disciplina</h2>
+    <a href="{{ url_for('disciplinas') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Voltar para Disciplinas
+    </a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ disciplina.nome }}</h5>
+        <a href="{{ url_for('editar_disciplina', disciplina_id=disciplina.id) }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-pencil-fill"></i> Editar Disciplina
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Ano:</strong> {{ disciplina.ano }}
+            </div>
+            <div class="col-md-6">
+                <strong>Período:</strong> {{ disciplina.periodo }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person-video3 me-2"></i>Gerenciar Professores</h5>
+            </div>
+            <div class="card-body">
+                <h6>Professores Lecionando Atualmente</h6>
+                {% if professores_associados %}
+                    <ul class="list-group mb-4">
+                        {% for professor in professores_associados %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ professor.nome }}
+                                <a href="{{ url_for('remover_associacao_professor', disciplina_id=disciplina.id, professor_id=professor.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted mb-4">Nenhum professor associado a esta disciplina.</p>
+                {% endif %}
+
+                <h6>Associar Novo Professor</h6>
+                <form action="{{ url_for('associar_professor', disciplina_id=disciplina.id) }}" method="POST">
+                    <div class="input-group">
+                        <select name="professor_id" class="form-select" required>
+                            <option value="" selected disabled>Selecione um professor...</option>
+                            {% for prof in professores_disponiveis %}
+                                <option value="{{ prof.id }}">{{ prof.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-success" type="submit"><i class="bi bi-plus-circle"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Gerenciar Alunos Inscritos</h5>
+            </div>
+            <div class="card-body">
+                <h6>Alunos Inscritos na Disciplina</h6>
+                {% if alunos_inscritos %}
+                    <ul class="list-group mb-4">
+                        {% for aluno in alunos_inscritos %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ aluno.nome }}
+                                <a href="{{ url_for('remover_inscricao_aluno', disciplina_id=disciplina.id, aluno_id=aluno.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted mb-4">Nenhum aluno inscrito nesta disciplina.</p>
+                {% endif %}
+
+                <h6>Inscrever Novo Aluno</h6>
+                <form action="{{ url_for('inscrever_aluno', disciplina_id=disciplina.id) }}" method="POST">
+                    <div class="input-group">
+                        <select name="aluno_id" class="form-select" required>
+                            <option value="" selected disabled>Selecione um aluno...</option>
+                            {% for aluno in alunos_disponiveis %}
+                                <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-success" type="submit"><i class="bi bi-plus-circle"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+/* Importa a fonte Poppins do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap' );
+
+/* Define variáveis de cor para fácil customização */
+:root {
+    --cor-primaria: #0db3b4;      /* Azul padrão do Bootstrap */
+    --cor-secundaria: #9fa7ae;  /* Cinza padrão */
+    --cor-sucesso: #198754;     /* Verde padrão */
+    --cor-perigo: #dc3545;      /* Vermelho padrão */
+    --cor-aviso: #ffc107;       /* Amarelo padrão */
+    --cor-info: #07a1a1;        /* Ciano padrão */
+    --cor-fundo: #f8f9fa;       /* Fundo claro */
+    --cor-texto: #212529;       /* Texto escuro */
+}
+
+/* Aplica a nova fonte a todo o corpo do documento */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+
+/* Sobrescreve as cores padrão do Bootstrap com nossas cores personalizadas */
+.btn-primary {
+    background-color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+}
+
+.btn-primary:hover {
+    background-color: #0a9b9c; /* Um tom um pouco mais escuro para o hover de #0db3b4 */
+    border-color: #0a9b9c;
+}
+
+
+.bg-primary {
+    background-color: var(--cor-primaria) !important; /* !important para garantir a sobreposição */
+}
+
+.navbar-dark .navbar-brand, .navbar-dark .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Estilo para os links, usando a cor primária */
+a {
+    color: var(--cor-primaria);
+}
+
+a:hover {
+    color: #0b5ed7;
+}
+
+/* Estiliza o contêiner da logo para criar o fundo branco */
+.logo-container {
+    background-color: white; /* O fundo branco que você pediu */
+    border-radius: 8px;      /* Bordas levemente arredondadas para um visual moderno */
+    padding: 5px 10px;       /* Preenchimento interno: 5px em cima/embaixo, 10px nos lados */
+    transition: all 0.3s ease; /* Efeito de transição suave para o hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Uma sombra sutil para dar profundidade */
+}
+
+/* Efeito de hover: quando o mouse passa por cima */
+.logo-container:hover {
+    transform: translateY(-2px); /* Levanta um pouco o contêiner */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Aumenta a sombra para um efeito 3D */
+}
+

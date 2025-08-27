@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="bi bi-layout-text-sidebar-reverse me-2"></i>Painel do Aluno</h2>
+    </div>
+
+    {% if session.user_type == 'responsavel' and alunos_associados|length > 0 %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('aluno_dashboard') }}" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="aluno_id_selector" class="form-label mb-0">
+                        <i class="bi bi-people-fill"></i> <strong>Visualizando boletim de:</strong>
+                    </label>
+                </div>
+                <div class="col">
+                    <select name="aluno_id" id="aluno_id_selector" class="form-select" onchange="this.form.submit()">
+                        {% for filho in alunos_associados %}
+                        <option value="{{ filho.id }}" {% if filho.id == aluno.id %}selected{% endif %}>
+                            {{ filho.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            {% if disciplinas_aluno %}
+                {% for disciplina in disciplinas_aluno %}
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ disciplina.nome }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center mb-3">
+                            <div class="col-6 border-end">
+                                <div class="text-muted">Média Parcial</div>
+                                <div class="fs-4 fw-bold {% if disciplina.media is not none and disciplina.media < 6 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(disciplina.media) if disciplina.media is not none else 'N/A' }}
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted">Frequência</div>
+                                <div class="fs-4 fw-bold {% if disciplina.percentual_frequencia < 75 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ disciplina.percentual_frequencia }}%
+                                </div>
+                                <div class="small text-muted">
+                                    Presenças: {{ disciplina.presencas }} | Faltas: {{ disciplina.faltas }}
+                                </div>
+                            </div>
+                            </div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#notas-{{ disciplina.id }}">
+                                Detalhar Notas
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#frequencia-{{ disciplina.id }}">
+                                Detalhar Frequência
+                            </button>
+                            
+                            {% if session.user_type == 'responsavel' %}
+                            <button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#grafico-{{ disciplina.id }}">
+                                Ver Gráfico
+                            </button>
+                            {% endif %}
+                            </div>
+                        <div class="collapse mt-3" id="notas-{{ disciplina.id }}">
+                            <h6>Notas Detalhadas</h6>
+                            <table class="table table-sm table-striped">
+                                <thead><tr><th>Avaliação</th><th>Nota</th></tr></thead>
+                                <tbody>
+                                {% for nota in disciplina.notas_detalhadas %}
+                                    <tr><td>{{ nota.titulo_avaliacao }}</td><td>{{ "%.1f"|format(nota.nota) }}</td></tr>
+                                {% else %}
+                                    <tr><td colspan="2" class="text-muted">Nenhuma nota lançada.</td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="collapse mt-3" id="frequencia-{{ disciplina.id }}">
+                            <h6>Frequência Detalhada</h6>
+                            <table class="table table-sm table-striped">
+                                <thead><tr><th>Data</th><th>Presença</th></tr></thead>
+                                <tbody>
+                                {% for freq in disciplina.frequencia_detalhada %}
+                                    <tr>
+                                        <td>{{ freq.data.strftime("%d/%m/%Y") }}</td>
+                                        <td>{% if freq['presente'] %}<span class="badge bg-success">Presente</span>{% else %}<span class="badge bg-danger">Faltou</span>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if session.user_type == 'responsavel' %}
+                        <div class="collapse mt-3" id="grafico-{{ disciplina.id }}">
+                            <h6>Evolução das Notas</h6>
+                            <canvas id="grafico-notas-{{ disciplina.id }}"></canvas>
+                        </div>
+                        {% endif %}
+                        </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning">Você não está inscrito em nenhuma disciplina.</div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header"><h5 class="mb-0"><i class="bi bi-megaphone-fill me-2"></i>Avisos Recentes</h5></div>
+                <div class="card-body">
+                    {% if avisos %}
+                        <ul class="list-group list-group-flush">
+                        {% for aviso in avisos %}
+                            <li class="list-group-item">
+                                <h6 class="fw-bold mb-1">{{ aviso.titulo }}</h6>
+                                <p class="mb-1 small">{{ aviso.conteudo }}</p>
+                                <small class="text-muted">{{ aviso.data_publicacao.strftime('%d/%m/%Y') }}</small>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">Nenhum aviso publicado.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // A lógica JS só será executada se o usuário for um responsável
+    {% if session.user_type == 'responsavel' %}
+        // Itera sobre cada disciplina para criar um gráfico individual
+        {% for disciplina in disciplinas_aluno %}
+            const canvas_{{ disciplina.id }} = document.getElementById('grafico-notas-{{ disciplina.id }}');
+            if (canvas_{{ disciplina.id }}) {
+                const ctx = canvas_{{ disciplina.id }}.getContext('2d');
+                
+                const labels = {{ disciplina.notas_detalhadas|map(attribute='titulo_avaliacao')|list|tojson }};
+                const data = {{ disciplina.notas_detalhadas|map(attribute='nota')|list|tojson }};
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Nota',
+                            data: data,
+                            fill: false,
+                            borderColor: 'rgb(0, 123, 255)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true, max: 10 } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        {% endfor %}
+    {% endif %}
+});
+</script>
+{% endblock %}

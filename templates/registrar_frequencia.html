@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Frequência: <strong>{{ disciplina['nome'] }}</strong></h2>
+        <a href="{{ url_for('professor_dashboard', professor_id=professor['id']) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle me-1"></i> Voltar ao Painel
+        </a>
+    </div>
+
+    <form method="post">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label for="data" class="form-label mb-0"><strong>Selecione a data da chamada:</strong></label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="date" id="data" name="data" class="form-control" value="{{ data_selecionada }}" required onchange="this.form.submit()">
+                        <input type="hidden" name="action" value="load_date">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if alunos %}
+                    <h5 class="card-title">Lista de Alunos</h5>
+                    <p class="text-muted">Marque a caixa para indicar que o aluno estava <strong>presente</strong> na data selecionada.</p>
+                    
+                    <ul class="list-group">
+                        {% for aluno in alunos %}
+                        <li class="list-group-item">
+                            <div class="form-check fs-5">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="presenca-{{ aluno['id'] }}" 
+                                       id="presenca-{{ aluno['id'] }}"
+                                       value="1"
+                                       {% if registros_frequencia.get(aluno['id']) == 1 %}checked{% endif %}>
+                                <label class="form-check-label" for="presenca-{{ aluno['id'] }}">
+                                    {{ aluno['nome'] }}
+                                </label>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save-fill"></i> Salvar Frequência do Dia
+                        </button>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhum aluno inscrito nesta disciplina para registrar frequência.</p>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('data').addEventListener('change', function() {
+        // Para evitar o envio do formulário duas vezes, o botão de salvar não
+        // precisa de lógica extra, a submissão padrão dele já funciona.
+        // A mudança no "date" agora recarrega a página para a data correta.
+        this.form.action = "{{ url_for('registrar_frequencia', disciplina_id=disciplina['id']) }}?data=" + this.value;
+        this.form.method = "get";
+        this.form.submit();
+    });
+</script>
+
+{% endblock %}

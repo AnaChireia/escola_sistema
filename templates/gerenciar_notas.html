@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Notas: <strong>{{ disciplina['nome'] }}</strong></h2>
+        <a href="{{ url_for('professor_dashboard', professor_id=professor['id']) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle me-1"></i> Voltar ao Painel
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Criar Nova Avaliação</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('criar_avaliacao', disciplina_id=disciplina['id']) }}" method="post" class="row g-3 align-items-end">
+                <div class="col">
+                    <label for="nome_avaliacao" class="form-label">Nome da Avaliação (Ex: Prova 1, Trabalho em Grupo)</label>
+                    <input type="text" class="form-control" id="nome_avaliacao" name="nome_avaliacao" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Adicionar Avaliação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Lançamento de Notas</h5>
+        </div>
+        <div class="card-body">
+            {% if alunos and avaliacoes %}
+                <form action="{{ url_for('salvar_notas', disciplina_id=disciplina['id']) }}" method="post">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th class="text-start">Aluno</th>
+                                    {% for avaliacao in avaliacoes %}
+                                        <th>{{ avaliacao['titulo'] }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aluno in alunos %}
+                                    <tr>
+                                        <td>{{ aluno['nome'] }}</td>
+                                        {% for avaliacao in avaliacoes %}
+                                            <td>
+                                                <input type="number" step="0.1" min="0" max="10" 
+                                                       name="nota-{{ aluno['id'] }}-{{ avaliacao['id'] }}" 
+                                                       class="form-control form-control-sm text-center"
+                                                       value="{{ notas.get((aluno['id'], avaliacao['id']), '') }}">
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save-fill"></i> Salvar Todas as Notas
+                        </button>
+                    </div>
+                </form>
+            {% elif not avaliacoes %}
+                <p class="text-muted">Você precisa criar pelo menos uma avaliação antes de poder lançar notas.</p>
+            {% else %}
+                <p class="text-muted">Nenhum aluno inscrito nesta disciplina ainda.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

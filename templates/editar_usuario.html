@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Editar Usuário</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Alterando dados de: <strong>{{ usuario['nome'] }}</strong></h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nome" class="form-label">Nome Completo</label>
+                    <input type="text" name="nome" id="nome" class="form-control" value="{{ usuario['nome'] }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ usuario['email'] }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="tipo_usuario" class="form-label">Tipo de Usuário</label>
+                    <select name="tipo_usuario" id="tipo_usuario" class="form-select" required>
+                        <option value="aluno" {% if usuario['tipo_usuario'] == 'aluno' %}selected{% endif %}>Aluno</option>
+                        <option value="professor" {% if usuario['tipo_usuario'] == 'professor' %}selected{% endif %}>Professor</option>
+                        <option value="responsavel" {% if usuario['tipo_usuario'] == 'responsavel' %}selected{% endif %}>Responsável</option>
+                        <option value="gestor" {% if usuario['tipo_usuario'] == 'gestor' %}selected{% endif %}>Gestor</option>
+                    </select>
+                </div>
+            
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a href="{{ url_for('usuarios') }}" class="btn btn-secondary me-2">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle-fill me-1"></i>Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if usuario.tipo_usuario == 'responsavel' %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Gerenciar Filhos Associados</h5>
+    </div>
+    <div class="card-body">
+        <div class="mb-4">
+            <h6>Filhos Já Associados</h6>
+            {% if filhos_associados %}
+                <ul class="list-group">
+                    {% for filho in filhos_associados %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ filho.nome }}
+                            <a href="{{ url_for('remover_associacao_responsavel', responsavel_id=usuario.id, aluno_id=filho.id) }}" 
+                               class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Tem certeza que deseja remover esta associação?');">
+                                <i class="bi bi-trash"></i> Remover
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Nenhum filho associado no momento.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h6>Associar Novo Aluno</h6>
+            {% if outros_alunos %}
+                <form action="{{ url_for('adicionar_associacao_responsavel', responsavel_id=usuario.id) }}" method="POST">
+                    <div class="input-group">
+                        <select name="aluno_id" class="form-select" required>
+                            <option value="" selected disabled>Selecione um aluno disponível...</option>
+                            {% for aluno in outros_alunos %}
+                                <option value="{{ aluno.id }}">{{ aluno.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-success" type="submit">
+                            <i class="bi bi-plus-circle"></i> Adicionar
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <p class="text-muted">Todos os alunos já estão associados a um responsável ou não há outros alunos cadastrados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

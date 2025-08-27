@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4">Editar Disciplina</h2>
+
+        <a href="{{ url_for('disciplinas') }}" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar para Gerenciar Disciplinas
+        </a>
+
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Editar Disciplina</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome da Disciplina</label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="{{ disciplina['nome'] }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ano" class="form-label">Ano</label>
+                        <input type="text" class="form-control" id="ano" name="ano" value="{{ disciplina['ano'] }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="periodo" class="form-label">Período</label>
+                        <input type="text" class="form-control" id="periodo" name="periodo" value="{{ disciplina['periodo'] }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Salvar Alterações
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

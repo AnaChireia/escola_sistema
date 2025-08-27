@@ -1,0 +1,16 @@
+{% extends 'base_login.html' %}
+{% block form_content %}
+<div class="text-center mb-4">
+    <h3>Crie uma Nova Senha</h3>
+    <p class="text-muted">Sua nova senha deve ser diferente da anterior.</p>
+</div>
+<form method="post">
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="nova_senha" name="nova_senha" placeholder="Nova Senha" required>
+        <label for="nova_senha"><i class="bi bi-key-fill me-2"></i>Nova Senha</label>
+    </div>
+    <div class="d-grid">
+        <button class="btn btn-primary btn-lg" type="submit">Redefinir Senha</button>
+    </div>
+</form>
+{% endblock %}
